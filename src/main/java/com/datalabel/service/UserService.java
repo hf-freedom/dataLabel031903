@@ -33,10 +33,6 @@ public class UserService {
         return userMapper.findAll();
     }
     
-    public List<User> findByOrganizationId(Long orgId) {
-        return userMapper.findByOrganizationId(orgId);
-    }
-    
     public List<User> findByRoleId(Long roleId) {
         return userMapper.findByRoleId(roleId);
     }
@@ -61,15 +57,6 @@ public class UserService {
         User user = userMapper.findById(userId);
         if (user != null) {
             user.setRoleId(roleId);
-            return userMapper.update(user) > 0;
-        }
-        return false;
-    }
-    
-    public boolean bindOrganization(Long userId, Long orgId) {
-        User user = userMapper.findById(userId);
-        if (user != null) {
-            user.setOrganizationId(orgId);
             return userMapper.update(user) > 0;
         }
         return false;
