@@ -1,5 +1,6 @@
 package com.datalabel.controller;
 
+import com.datalabel.annotation.RequirePermission;
 import com.datalabel.common.Result;
 import com.datalabel.entity.User;
 import com.datalabel.service.UserService;
@@ -16,11 +17,13 @@ public class UserController {
     @Autowired
     private UserService userService;
     
+    @RequirePermission("user:list")
     @GetMapping("/list")
     public Result<List<User>> list() {
         return Result.success(userService.findAll());
     }
     
+    @RequirePermission("user:list")
     @GetMapping("/{id}")
     public Result<User> getById(@PathVariable Long id) {
         User user = userService.findById(id);
@@ -30,6 +33,7 @@ public class UserController {
         return Result.success(user);
     }
     
+    @RequirePermission("user:save")
     @PostMapping("/save")
     public Result<String> save(@RequestBody User user) {
         User existUser = userService.findByUsername(user.getUsername());
@@ -68,6 +72,7 @@ public class UserController {
         return Result.error("修改失败");
     }
     
+    @RequirePermission("user:delete")
     @DeleteMapping("/{id}")
     public Result<String> delete(@PathVariable Long id) {
         if (userService.deleteById(id)) {
@@ -79,14 +84,6 @@ public class UserController {
     @PostMapping("/bindRole")
     public Result<String> bindRole(@RequestParam Long userId, @RequestParam Long roleId) {
         if (userService.bindRole(userId, roleId)) {
-            return Result.success("绑定成功", null);
-        }
-        return Result.error("绑定失败");
-    }
-    
-    @PostMapping("/bindOrg")
-    public Result<String> bindOrganization(@RequestParam Long userId, @RequestParam Long orgId) {
-        if (userService.bindOrganization(userId, orgId)) {
             return Result.success("绑定成功", null);
         }
         return Result.error("绑定失败");

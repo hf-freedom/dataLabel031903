@@ -27,12 +27,6 @@ public class UserMapper {
         return cache.getAll(User.class);
     }
     
-    public List<User> findByOrganizationId(Long orgId) {
-        return cache.getAll(User.class).stream()
-                .filter(u -> orgId.equals(u.getOrganizationId()))
-                .collect(Collectors.toList());
-    }
-    
     public List<User> findByRoleId(Long roleId) {
         return cache.getAll(User.class).stream()
                 .filter(u -> roleId.equals(u.getRoleId()))

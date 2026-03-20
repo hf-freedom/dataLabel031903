@@ -1,5 +1,6 @@
 package com.datalabel.controller;
 
+import com.datalabel.annotation.RequirePermission;
 import com.datalabel.common.Result;
 import com.datalabel.entity.Role;
 import com.datalabel.service.RoleService;
@@ -15,11 +16,13 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
     
+    @RequirePermission("role:list")
     @GetMapping("/list")
     public Result<List<Role>> list() {
         return Result.success(roleService.findAll());
     }
     
+    @RequirePermission("role:list")
     @GetMapping("/{id}")
     public Result<Role> getById(@PathVariable Long id) {
         Role role = roleService.findById(id);
@@ -29,6 +32,7 @@ public class RoleController {
         return Result.success(role);
     }
     
+    @RequirePermission("role:save")
     @PostMapping("/save")
     public Result<String> save(@RequestBody Role role) {
         if (roleService.save(role)) {
@@ -37,6 +41,7 @@ public class RoleController {
         return Result.error("保存失败");
     }
     
+    @RequirePermission("role:delete")
     @DeleteMapping("/{id}")
     public Result<String> delete(@PathVariable Long id) {
         if (roleService.deleteById(id)) {
