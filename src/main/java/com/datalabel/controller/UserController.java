@@ -1,6 +1,9 @@
 package com.datalabel.controller;
 
+import com.datalabel.annotation.RequiresPermission;
 import com.datalabel.common.Result;
+import com.datalabel.entity.ApiPermission;
+import com.datalabel.entity.Menu;
 import com.datalabel.entity.User;
 import com.datalabel.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +20,13 @@ public class UserController {
     private UserService userService;
     
     @GetMapping("/list")
+    @RequiresPermission("user:view")
     public Result<List<User>> list() {
         return Result.success(userService.findAll());
     }
     
     @GetMapping("/{id}")
+    @RequiresPermission("user:view")
     public Result<User> getById(@PathVariable Long id) {
         User user = userService.findById(id);
         if (user == null) {
@@ -31,6 +36,7 @@ public class UserController {
     }
     
     @PostMapping("/save")
+    @RequiresPermission("user:edit")
     public Result<String> save(@RequestBody User user) {
         User existUser = userService.findByUsername(user.getUsername());
         if (existUser != null && !existUser.getId().equals(user.getId())) {
@@ -43,6 +49,7 @@ public class UserController {
     }
     
     @PostMapping("/update")
+    @RequiresPermission("user:edit")
     public Result<String> update(@RequestBody User user, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
@@ -69,6 +76,7 @@ public class UserController {
     }
     
     @DeleteMapping("/{id}")
+    @RequiresPermission("user:delete")
     public Result<String> delete(@PathVariable Long id) {
         if (userService.deleteById(id)) {
             return Result.success("删除成功", null);
@@ -77,6 +85,7 @@ public class UserController {
     }
     
     @PostMapping("/bindRole")
+    @RequiresPermission("user:bind")
     public Result<String> bindRole(@RequestParam Long userId, @RequestParam Long roleId) {
         if (userService.bindRole(userId, roleId)) {
             return Result.success("绑定成功", null);
@@ -84,11 +93,31 @@ public class UserController {
         return Result.error("绑定失败");
     }
     
-    @PostMapping("/bindOrg")
-    public Result<String> bindOrganization(@RequestParam Long userId, @RequestParam Long orgId) {
-        if (userService.bindOrganization(userId, orgId)) {
-            return Result.success("绑定成功", null);
+    @GetMapping("/{id}/menus")
+    public Result<List<Menu>> getUserMenus(@PathVariable Long id) {
+        return Result.success(userService.getUserMenus(id));
+    }
+    
+    @GetMapping("/{id}/permissions")
+    public Result<List<ApiPermission>> getUserPermissions(@PathVariable Long id) {
+        return Result.success(userService.getUserPermissions(id));
+    }
+    
+    @GetMapping("/current/menus")
+    public Result<List<Menu>> getCurrentUserMenus(HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return Result.error(401, "未登录");
         }
-        return Result.error("绑定失败");
+        return Result.success(userService.getUserMenus(currentUser.getId()));
+    }
+    
+    @GetMapping("/current/permissions")
+    public Result<List<ApiPermission>> getCurrentUserPermissions(HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return Result.error(401, "未登录");
+        }
+        return Result.success(userService.getUserPermissions(currentUser.getId()));
     }
 }

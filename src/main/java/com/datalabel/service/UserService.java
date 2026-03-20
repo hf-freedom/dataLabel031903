@@ -1,5 +1,7 @@
 package com.datalabel.service;
 
+import com.datalabel.entity.ApiPermission;
+import com.datalabel.entity.Menu;
 import com.datalabel.entity.User;
 import com.datalabel.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,12 @@ public class UserService {
     
     @Autowired
     private UserMapper userMapper;
+    
+    @Autowired
+    private RoleService roleService;
+    
+    @Autowired
+    private PermissionService permissionService;
     
     public User login(String username, String password) {
         User user = userMapper.findByUsername(username);
@@ -31,10 +39,6 @@ public class UserService {
     
     public List<User> findAll() {
         return userMapper.findAll();
-    }
-    
-    public List<User> findByOrganizationId(Long orgId) {
-        return userMapper.findByOrganizationId(orgId);
     }
     
     public List<User> findByRoleId(Long roleId) {
@@ -66,12 +70,19 @@ public class UserService {
         return false;
     }
     
-    public boolean bindOrganization(Long userId, Long orgId) {
+    public List<Menu> getUserMenus(Long userId) {
         User user = userMapper.findById(userId);
-        if (user != null) {
-            user.setOrganizationId(orgId);
-            return userMapper.update(user) > 0;
+        if (user != null && user.getRoleId() != null) {
+            return roleService.getMenusByRoleId(user.getRoleId());
         }
-        return false;
+        return null;
+    }
+    
+    public List<ApiPermission> getUserPermissions(Long userId) {
+        User user = userMapper.findById(userId);
+        if (user != null && user.getRoleId() != null) {
+            return permissionService.getApiPermissionsByRoleId(user.getRoleId());
+        }
+        return null;
     }
 }
