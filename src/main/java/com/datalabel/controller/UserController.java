@@ -1,5 +1,6 @@
 package com.datalabel.controller;
 
+import com.datalabel.annotation.RequireApiPermission;
 import com.datalabel.common.Result;
 import com.datalabel.entity.User;
 import com.datalabel.service.UserService;
@@ -17,11 +18,13 @@ public class UserController {
     private UserService userService;
     
     @GetMapping("/list")
+    @RequireApiPermission("user:list")
     public Result<List<User>> list() {
         return Result.success(userService.findAll());
     }
     
     @GetMapping("/{id}")
+    @RequireApiPermission("user:view")
     public Result<User> getById(@PathVariable Long id) {
         User user = userService.findById(id);
         if (user == null) {
@@ -31,6 +34,7 @@ public class UserController {
     }
     
     @PostMapping("/save")
+    @RequireApiPermission("user:save")
     public Result<String> save(@RequestBody User user) {
         User existUser = userService.findByUsername(user.getUsername());
         if (existUser != null && !existUser.getId().equals(user.getId())) {
@@ -43,6 +47,7 @@ public class UserController {
     }
     
     @PostMapping("/update")
+    @RequireApiPermission("user:update")
     public Result<String> update(@RequestBody User user, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
@@ -69,6 +74,7 @@ public class UserController {
     }
     
     @DeleteMapping("/{id}")
+    @RequireApiPermission("user:delete")
     public Result<String> delete(@PathVariable Long id) {
         if (userService.deleteById(id)) {
             return Result.success("删除成功", null);
@@ -77,16 +83,9 @@ public class UserController {
     }
     
     @PostMapping("/bindRole")
+    @RequireApiPermission("user:bindRole")
     public Result<String> bindRole(@RequestParam Long userId, @RequestParam Long roleId) {
         if (userService.bindRole(userId, roleId)) {
-            return Result.success("绑定成功", null);
-        }
-        return Result.error("绑定失败");
-    }
-    
-    @PostMapping("/bindOrg")
-    public Result<String> bindOrganization(@RequestParam Long userId, @RequestParam Long orgId) {
-        if (userService.bindOrganization(userId, orgId)) {
             return Result.success("绑定成功", null);
         }
         return Result.error("绑定失败");

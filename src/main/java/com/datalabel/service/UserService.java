@@ -65,13 +65,4 @@ public class UserService {
         }
         return false;
     }
-    
-    public boolean bindOrganization(Long userId, Long orgId) {
-        User user = userMapper.findById(userId);
-        if (user != null) {
-            user.setOrganizationId(orgId);
-            return userMapper.update(user) > 0;
-        }
-        return false;
-    }
 }
