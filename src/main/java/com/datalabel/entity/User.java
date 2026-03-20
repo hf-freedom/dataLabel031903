@@ -12,7 +12,6 @@ public class User implements Serializable {
     private String email;
     private String phone;
     private Integer userType;
-    private Long organizationId;
     private Long roleId;
     
     public User() {}
@@ -39,8 +38,6 @@ public class User implements Serializable {
     public void setPhone(String phone) { this.phone = phone; }
     public Integer getUserType() { return userType; }
     public void setUserType(Integer userType) { this.userType = userType; }
-    public Long getOrganizationId() { return organizationId; }
-    public void setOrganizationId(Long organizationId) { this.organizationId = organizationId; }
     public Long getRoleId() { return roleId; }
     public void setRoleId(Long roleId) { this.roleId = roleId; }
 }

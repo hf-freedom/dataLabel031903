@@ -2,16 +2,18 @@ package com.datalabel.entity;
 
 import java.io.Serializable;
 
-public class Role implements Serializable {
+public class ApiPermission implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private Long id;
     private String name;
     private String code;
+    private String path;
+    private String method;
+    private Long menuId;
     private String description;
-    private Long organizationId;
     
-    public Role() {}
+    public ApiPermission() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -19,8 +21,12 @@ public class Role implements Serializable {
     public void setName(String name) { this.name = name; }
     public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }
+    public String getPath() { return path; }
+    public void setPath(String path) { this.path = path; }
+    public String getMethod() { return method; }
+    public void setMethod(String method) { this.method = method; }
+    public Long getMenuId() { return menuId; }
+    public void setMenuId(Long menuId) { this.menuId = menuId; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public Long getOrganizationId() { return organizationId; }
-    public void setOrganizationId(Long organizationId) { this.organizationId = organizationId; }
 }
